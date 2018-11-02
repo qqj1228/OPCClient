@@ -1,0 +1,18 @@
+<Config>
+  <Main>
+    <!-- 上一车检测完成信号，须0转1才起效，byte -->
+    <ItemIDComplete>Channel_4.Device_6.Bool_15</ItemIDComplete>
+    <!-- 轮胎品番对应的传感器编号，WORD -->
+    <ItemIDSensorID>Channel_4.Device_6.Short_1</ItemIDSensorID>
+    <!-- 当前车辆轮胎数，WORD -->
+    <ItemIDQty>Channel_4.Device_6.Word_1</ItemIDQty>
+    <!-- 当前轮胎数量，进入下一条时须清零，WORD -->
+    <ItemIDClear>Channel_4.Device_6.Word_2</ItemIDClear>
+    <!-- 当前检测轮胎的传感器ID，DWORD -->
+    <SensorID>Channel_4.Device_6.Word_2</SensorID>
+    <!-- 当前检测轮胎的胎压，DWORD -->
+    <Press>Channel_4.Device_6.Word_2</Press>
+    <IsListSystemID>False</IsListSystemID>
+    <IsUseConfig>True</IsUseConfig>
+  </Main>
+</Config>

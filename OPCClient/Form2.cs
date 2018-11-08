@@ -31,7 +31,7 @@ namespace OPCClient
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            log = new LoggerClass("./log", EnumLogLevel.LogLevelAll, true);
+            log = new LoggerClass("./log", EnumLogLevel.LogLevelAll, true, 4);
             cfg = new Config(log);
             mo = new MyOPC(log, cfg);
             // opc程序UDP端口8765，显示程序UDP端口5678
@@ -44,8 +44,11 @@ namespace OPCClient
             }
             comboBox1.SelectedIndex = 0;
 
-
-            listView1.Columns.Add("句柄");
+            if (cfg.Main.IsUseConfig) {
+                listView1.Columns.Add("Tag名");
+            } else {
+                listView1.Columns.Add("句柄");
+            }
             listView1.Columns.Add("Tag值");
             listView1.Columns.Add("品质");
             listView1.Columns.Add("时间戳");
@@ -129,9 +132,9 @@ namespace OPCClient
             for (int i = 1; i <= NumItems; i++)
             {
                 listBox1.Items.Add("句柄：" + ClientHandles.GetValue(i).ToString() + "\t\t" +
-                                    "Tag值：" + ItemValues.GetValue(i).ToString() + "\t\t" +
-                                    "品质：" + Qualities.GetValue(i).ToString() + "\t\t" +
-                                    "时间戳：" + TimeStamps.GetValue(i).ToString());
+                                    "Tag值：" + ItemValues.GetValue(i).ToString() + "\t" +
+                                    "品质：" + Qualities.GetValue(i).ToString() + "\t" +
+                                    "时间戳：" + ((DateTime)TimeStamps.GetValue(i)).ToLocalTime().ToString());
 
                 int index = (int)ClientHandles.GetValue(i);
                 if (cfg.Main.IsUseConfig)
@@ -144,7 +147,7 @@ namespace OPCClient
                 }
                 listView1.Items[index].SubItems[1].Text = ItemValues.GetValue(i).ToString();
                 listView1.Items[index].SubItems[2].Text = Qualities.GetValue(i).ToString();
-                listView1.Items[index].SubItems[3].Text = TimeStamps.GetValue(i).ToString();
+                listView1.Items[index].SubItems[3].Text = ((DateTime)TimeStamps.GetValue(i)).ToLocalTime().ToString();
                 if (cfg.Main.IsUseConfig)
                 {
                     switch (index)

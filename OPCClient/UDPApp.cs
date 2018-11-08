@@ -13,6 +13,7 @@ namespace OPCClient
         UdpClient udpApp;
         MyOPC opc;
         LoggerClass log;
+        IPEndPoint remoteIpEndPoint;
         public List<int> iReceiveList = new List<int>(3);
 
         public UDPApp(int portLocal, int portRemote, MyOPC opc, LoggerClass log)
@@ -23,6 +24,9 @@ namespace OPCClient
             udpApp.Connect("localhost", portRemote);
             this.opc = opc;
             this.log = log;
+            //设置远程主机，(IPAddress.Any, 0)代表接收所有IP所有端口发送的数据
+            //或 IPEndPoint remoteIpEndPoint = null;
+            remoteIpEndPoint = new IPEndPoint(IPAddress.Any, portRemote);
         }
 
         ~UDPApp()
@@ -49,9 +53,6 @@ namespace OPCClient
             {
                 try
                 {
-                    //设置远程主机，(IPAddress.Any, 0)代表接收所有IP所有端口发送的数据
-                    //或 IPEndPoint remoteIpEndPoint = null;
-                    IPEndPoint remoteIpEndPoint = new IPEndPoint(IPAddress.Any, 5678);
                     //监听数据，接收到数据后，把数据转换成字符串并输出
                     // 收到的消息格式'flag,ItemIDSensorID,ItemIDQty,ItemIDClear'
                     // flag="C", 即为需要的数据

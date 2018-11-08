@@ -27,23 +27,30 @@ namespace OPCClient
         string StrLogPath { get; set; }
         string StrLogName { get; set; }
         object ObjLock { get; set; }
+        Queue<string> FileQueue { get; set; }
+        int MaxFileQty { get; set; }
 
         public LoggerClass()
         {
             this.LogLevel = EnumLogLevel.LogLevelNormal;
             this.IsTraceLineNum = true;
             this.ObjLock = new object();
-            GenerateLogName();
+            this.StrLogPath = ".";
+            this.MaxFileQty = 0;
+            FileQueue = new Queue<string>();
+            GenFileQueue();
         }
 
-        public LoggerClass(string strLogPath, EnumLogLevel LogLevel, bool IsTraceLineNum)
+        public LoggerClass(string strLogPath, EnumLogLevel LogLevel, bool IsTraceLineNum, int maxFileQty)
         {
             this.LogLevel = LogLevel;
             this.IsTraceLineNum = IsTraceLineNum;
             this.StrLogPath = strLogPath;
             this.ObjLock = new object();
+            this.MaxFileQty = maxFileQty;
+            FileQueue = new Queue<string>();
             CreateLogPath();
-            GenerateLogName();
+            GenFileQueue();
         }
 
         public void TraceFatal(string strLog)
@@ -86,15 +93,21 @@ namespace OPCClient
             Trace(strLineHead + strLog);
         }
 
-        void GenerateLogName()
+        /// <summary>
+        /// 生成log文件名
+        /// </summary>
+        /// <returns>
+        /// 若生成新的文件名的话返回true，否则没有生成新的文件名的话返回false
+        /// </returns>
+        bool GenerateLogName()
         {
             string strTemp = DateTime.Now.Date.ToString("yyyy-MM-dd") + ".log";
             if (StrLogName != strTemp)
             {
                 StrLogName = strTemp;
-                StreamWriter streamWriter = File.AppendText(StrLogPath + "\\" + StrLogName);
-                streamWriter.Close();
+                return true;
             }
+            return false;
         }
 
         void CreateLogPath()
@@ -139,6 +152,10 @@ namespace OPCClient
             {
                 try
                 {
+                    if (GenerateLogName()) {
+                        UpdateFileQueue();
+                        FileQueue.Enqueue(StrLogPath + "\\" + StrLogName);
+                    }
                     StreamWriter streamWriter = File.AppendText(StrLogPath + "\\" + StrLogName);
                     streamWriter.WriteLine(strLog);
                     streamWriter.Flush();
@@ -147,6 +164,29 @@ namespace OPCClient
                 catch (Exception e)
                 {
                     Console.Error.WriteLine(e.Message);
+                }
+            }
+        }
+
+        void GenFileQueue() {
+            DirectoryInfo dirinfo = new DirectoryInfo(StrLogPath);
+            FileInfo[] Files = dirinfo.GetFiles();
+            // 递增排序
+            Array.Sort<FileInfo>(Files, (FileInfo x, FileInfo y) => { return x.LastWriteTime.CompareTo(y.LastWriteTime); });
+            // 递减排序
+            //Array.Sort<FileInfo>(Files, (FileInfo x, FileInfo y) => { return y.LastWriteTime.CompareTo(x.LastWriteTime); });
+            foreach (var item in Files) {
+                FileQueue.Enqueue(StrLogPath + "\\" + item.Name);
+            }
+        }
+
+        void UpdateFileQueue() {
+            if (MaxFileQty > 0) {
+                int qty = FileQueue.Count - MaxFileQty + 1;
+                if (qty > 0) {
+                    for (int i = 0; i < qty; i++) {
+                        File.Delete(FileQueue.Dequeue());
+                    }
                 }
             }
         }

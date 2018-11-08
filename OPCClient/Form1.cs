@@ -40,8 +40,8 @@ namespace OPCClient
         /// </summary>
         OPCItem KepItem;
 
-        OPCItem KepItem1;
-        OPCItem KepItem2;
+        //OPCItem KepItem1;
+        //OPCItem KepItem2;
         /// <summary>
         /// 主机IP
         /// </summary>
@@ -53,7 +53,7 @@ namespace OPCClient
         /// <summary>
         /// 连接状态
         /// </summary>
-        bool opc_connected = false;
+        //bool opc_connected = false;
         /// <summary>
         /// 客户端句柄
         /// </summary>
@@ -64,7 +64,7 @@ namespace OPCClient
         int itmHandleServer = 0;
         #endregion
 
-        MyOPC mo;
+        //MyOPC mo;
        // #region 方法
         /// <summary>
         /// 枚举本地OPC服务器
@@ -325,7 +325,7 @@ namespace OPCClient
                     return;
                 }
                 //btnSetGroupPro.Enabled = true;
-                opc_connected = true;
+                //opc_connected = true;
                 GetServerInfo();
                 RecurBrowse(KepServer.CreateBrowser());
                 if (!CreateGroup())

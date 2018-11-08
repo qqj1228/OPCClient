@@ -31,7 +31,7 @@ namespace OPCClient
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            log = new LoggerClass("./log", EnumLogLevel.LogLevelAll, true, 4);
+            log = new LoggerClass("./log", EnumLogLevel.LogLevelAll, true, 100);
             cfg = new Config(log);
             mo = new MyOPC(log, cfg);
             // opc程序UDP端口8765，显示程序UDP端口5678

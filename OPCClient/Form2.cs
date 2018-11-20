@@ -157,7 +157,7 @@ namespace OPCClient
                             sendData[0] = ItemValues.GetValue(i).ToString();
                             break;
                         case 3:
-                            // 读取ItemIDItemIDClear的值
+                            // 读取ItemIDClear的值
                             sendData[1] = ItemValues.GetValue(i).ToString();
                             break;
                         case 4:

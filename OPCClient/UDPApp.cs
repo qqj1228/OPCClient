@@ -14,7 +14,7 @@ namespace OPCClient
         MyOPC opc;
         LoggerClass log;
         IPEndPoint remoteIpEndPoint;
-        public List<int> iReceiveList = new List<int>(3);
+        public List<int> iReceiveList = new List<int>(4);
 
         public UDPApp(int portLocal, int portRemote, MyOPC opc, LoggerClass log)
         {
@@ -59,17 +59,17 @@ namespace OPCClient
                     byte[] receiveBytes = udpApp.Receive(ref remoteIpEndPoint);
                     string returnData = Encoding.ASCII.GetString(receiveBytes);
                     Console.WriteLine("Received message:\"" + returnData.ToString() + "\" from " + remoteIpEndPoint.Address.ToString() + ":" + remoteIpEndPoint.Port.ToString());
+                    log.TraceInfo("Received message:\"" + returnData.ToString() + "\" from " + remoteIpEndPoint.Address.ToString() + ":" + remoteIpEndPoint.Port.ToString());
                     string[] strArr = returnData.Split(',');
-                    if (strArr[0] != "C")
+                    if (strArr[0] == "C")
                     {
-                        return;
+                        iReceiveList.Clear();
+                        for (int i = 1; i < strArr.Length; i++)
+                        {
+                            iReceiveList.Add(int.Parse(strArr[i]));
+                        }
+                        opc.WriteItemInt(iReceiveList);
                     }
-                    iReceiveList.Clear();
-                    for (int i = 1; i < strArr.Length; i++)
-                    {
-                        iReceiveList.Add(int.Parse(strArr[i]));
-                    }
-                    opc.WriteItemInt(iReceiveList);
                 }
                 catch (Exception err)
                 {
